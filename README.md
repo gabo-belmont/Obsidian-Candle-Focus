@@ -2,8 +2,7 @@
 
 Candle Focus is a high-performance [Obsidian](https://obsidian.md) plugin designed to enhance concentration by applying a dynamic CSS mask to your editor. This creates a "candlelight" effect where the text you are currently reading remains clear, while the surrounding content subtly fades away.
 
-
-https://github.com/user-attachments/assets/983c25dd-9554-40fb-b356-f19d23cc1afd
+<video src="https://github.com/user-attachments/assets/983c25dd-9554-40fb-b356-f19d23cc1afd" autoplay loop muted playsinline width="100%"></video>
 
 
 ## Focus & Study Aid
