@@ -1,0 +1,9 @@
+{
+	"id": "candle-focus",
+	"name": "Candle Focus",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Dynamic focus based on file scroll position",
+	"author": "gabo-belmont",
+	"isDesktopOnly": false
+}

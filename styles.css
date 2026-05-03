@@ -1,0 +1,44 @@
+:root {
+    --focus-height: 35%;
+    --focus-offset: 0%;
+    --focus-smoothing: 18%;
+    --scroll-edge-factor: 0; /* 0 at file beginning, 1 when we go down */
+}
+
+.has-focus-scroll .markdown-source-view.mod-cm6 .cm-scroller {
+    --focus-start: calc(50% + var(--focus-offset) - (var(--focus-height) / 2));
+    --focus-end: calc(50% + var(--focus-offset) + (var(--focus-height) / 2));
+    
+    /* Calculates superior opacity, if we are at the top, it tends to 1 (bright) */
+    --top-opacity: calc(0.1 + (0.9 * (1 - var(--scroll-edge-factor))));
+
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, var(--top-opacity)) 0%, 
+        rgba(0, 0, 0, var(--top-opacity)) calc(var(--focus-start) - var(--focus-smoothing)),
+        rgba(0, 0, 0, 1) var(--focus-start),
+        rgba(0, 0, 0, 1) var(--focus-end),
+        rgba(0, 0, 0, 0.1) calc(var(--focus-end) + var(--focus-smoothing)),
+        rgba(0, 0, 0, 0.1) 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, var(--top-opacity)) 0%, 
+        rgba(0, 0, 0, var(--top-opacity)) calc(var(--focus-start) - var(--focus-smoothing)),
+        rgba(0, 0, 0, 1) var(--focus-start),
+        rgba(0, 0, 0, 1) var(--focus-end),
+        rgba(0, 0, 0, 0.1) calc(var(--focus-end) + var(--focus-smoothing)),
+        rgba(0, 0, 0, 0.1) 100%
+    );
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+}
+
+.has-focus-scroll .cm-scrollbar {
+    opacity: 1 !important;
+    mask-image: none !important;
+}
+
+.side-dock-ribbon-action.is-active {
+    color: var(--interactive-accent) !important;
+}
