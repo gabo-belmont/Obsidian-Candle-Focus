@@ -3,7 +3,7 @@
 	"name": "Candle Focus",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Dynamic candlelight effect for Obsidian, optimized for reading focus and smooth scrolling.",
+	"description": "Dynamic candlelight effect, optimized for reading focus and smooth scrolling.",
 	"author": "gabo-belmont",
 	"isDesktopOnly": false
 }
