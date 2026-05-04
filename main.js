@@ -1,6 +1,7 @@
 /* 
     Candle Focus Plugin for Obsidian
     An optimized focus effect using CSS masks and variables.
+    Updated for strict workspace scoping and resource management.
 */
 
 const { Plugin, PluginSettingTab, Setting, addIcon } = require('obsidian');
@@ -22,41 +23,40 @@ module.exports = class FocusScrollPlugin extends Plugin {
         await this.loadSettings();
         addIcon('reading-candle', CANDLE_ICON);
 
-        // Add ribbon icon to toggle the effect
         this.ribbonIconEl = this.addRibbonIcon('reading-candle', 'Candle Focus', () => {
             this.toggleEffect();
         });
 
         this.addSettingTab(new FocusSettingTab(this.app, this));
 
-        // Optimized scroll listener: updates only the scroll-edge-factor
         this.updateScrollPos = (evt) => {
             if (!this.settings.enabled) return;
             
             const target = evt.target;
-            // Ensure we are targeting the CodeMirror scroller
             if (target && target.classList.contains('cm-scroller')) {
                 const factor = Math.min(target.scrollTop / 200, 1);
                 
-                // Use requestAnimationFrame for smoother visual updates synced with the browser's refresh rate
                 window.requestAnimationFrame(() => {
-                    document.body.style.setProperty('--scroll-edge-factor', factor.toString());
+                    // SCOPE FIX: Apply properties to workspace container instead of document.body
+                    this.app.workspace.containerEl.style.setProperty('--scroll-edge-factor', factor.toString());
                 });
             }
         };
 
-        // Listen for scroll events in the capture phase for better performance
-        window.addEventListener('scroll', this.updateScrollPos, true);
+        // BEST PRACTICE: Using this.registerDomEvent ensures auto-cleanup on unload
+        this.registerDomEvent(window, 'scroll', this.updateScrollPos, true);
         
-        // Initial visual sync
         this.refreshVisuals();
     }
 
     onunload() {
-        // Cleanup to prevent memory leaks and residual styles
-        window.removeEventListener('scroll', this.updateScrollPos, true);
-        document.body.classList.remove('has-focus-scroll');
-        document.body.style.removeProperty('--scroll-edge-factor');
+        // CLEANUP: Scoped cleanup for workspace container
+        const container = this.app.workspace.containerEl;
+        container.classList.remove('has-focus-scroll');
+        container.style.removeProperty('--scroll-edge-factor');
+        container.style.removeProperty('--focus-height');
+        container.style.removeProperty('--focus-offset');
+        container.style.removeProperty('--focus-smoothing');
     }
 
     async toggleEffect() {
@@ -73,24 +73,24 @@ module.exports = class FocusScrollPlugin extends Plugin {
         await this.saveData(this.settings);
     }
 
-    // refreshVisuals handles state and class toggling
     refreshVisuals() {
+        const container = this.app.workspace.containerEl;
         if (this.settings.enabled) {
-            document.body.classList.add('has-focus-scroll');
+            container.classList.add('has-focus-scroll');
             this.ribbonIconEl?.classList.add('is-active');
             this.updateVariables();
         } else {
-            document.body.classList.remove('has-focus-scroll');
+            container.classList.remove('has-focus-scroll');
             this.ribbonIconEl?.classList.remove('is-active');
         }
     }
 
-    // updateVariables injects static settings into CSS variables
     updateVariables() {
-        const style = document.body.style;
-        style.setProperty('--focus-height', `${this.settings.focusHeight}%`);
-        style.setProperty('--focus-offset', `${this.settings.focusOffset}%`);
-        style.setProperty('--focus-smoothing', `${this.settings.focusSmoothing}%`);
+        // SCOPE FIX: Injected variables into workspace container
+        const containerStyle = this.app.workspace.containerEl.style;
+        containerStyle.setProperty('--focus-height', `${this.settings.focusHeight}%`);
+        containerStyle.setProperty('--focus-offset', `${this.settings.focusOffset}%`);
+        containerStyle.setProperty('--focus-smoothing', `${this.settings.focusSmoothing}%`);
     }
 };
 
